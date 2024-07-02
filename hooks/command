@@ -14,7 +14,7 @@ f_get_diff() {
   local default_diff_commands
   local diff_commands
 
-  default_diff_commands="git diff --name-only origin/master...HEAD,git diff --name-only HEAD HEAD~1"
+  default_diff_commands="git diff --name-only origin/${BUILDKITE_PLUGIN_GIT_DIFF_CONDITIONAL_DEFAULT_BRANCH:-"master"}...HEAD,git diff --name-only HEAD HEAD~1"
 
   IFS=','
   read -r -a diff_commands <<< "${BUILDKITE_PLUGIN_GIT_DIFF_CONDITIONAL_DIFF:-$default_diff_commands}"

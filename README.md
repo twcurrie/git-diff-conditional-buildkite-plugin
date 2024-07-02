@@ -20,7 +20,7 @@ Please see the below examples on how to use this plugin with buildkite. The [bui
 steps:
   - label: ":partyparrot: Creating the pipeline"
     plugins:
-      - Zegocover/git-diff-conditional#v1.1.1:
+      - twcurrie/git-diff-conditional#v1.2.0:
           dynamic_pipeline: ".buildkite/dynamic_pipeline.yml"
           steps:
             - label: "build and deploy lambda"
@@ -53,16 +53,17 @@ The above example `initial_pipeline` will skip the `build and deploy lambda` ste
 
 ## Configuration
 
-| Option           | Required |   Type    | Default | Description                                                                                                                                                                                            |
-| ---------------- | :------: | :-------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| dynamic_pipeline |   Yes    | `string`  |         | The name including the path to the pipeline that contains all the actual `steps`                                                                                                                       |
-| disable_plugin   |    No    | `boolean` | `false` | This can be used to pass the entire `dynamic_pipeline` pipeline straight to buildkite without skipping a single step.                                                                                  |
-| diff             |    No    | `string`  |         | Can be used to override the default commands (see below for a better explanation of the defaults) Pass a comma-seperated string of git diff commands if you want multiple custom git diff commands run |
-| log_level        |    No    | `string`  | `INFO`  | The Level of logging to be used by the python script underneath. Pass `DEBUG` for verbose logging if errors occur                                                                                      |
-| steps            |   Yes    |  `array`  |         | Each Step should contain a `label` with the `include`/`exclude` settings relevant to the label it applies to within the `dynamic_pipeline` file                                                        |
-| label            |   Yes    | `string`  |         | The `label` these conditions apply to within the `dynamic_pipeline` file. (These should be an EXACT match)                                                                                             |
-| include          |    No    |  `array`  |         | If any element is found within the `git diff` then this step will NOT be skipped                                                                                                                       |
-| exclude          |    No    |  `array`  |         | If any alement is found within the `git diff` then this step will be SKIPPED                                                                                                                           |
+| Option           | Required |   Type    | Default  | Description                                                                                                                                                                                            |
+|------------------| :------: |:---------:|:--------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| dynamic_pipeline |   Yes    | `string`  |          | The name including the path to the pipeline that contains all the actual `steps`                                                                                                                       |
+| default_branch   |    No    | `string`  | `master` | This is the branch from origin that the `git diff` will be run against (origin/<default_branch>)                                                                                                       |
+| disable_plugin   |    No    | `boolean` | `false`  | This can be used to pass the entire `dynamic_pipeline` pipeline straight to buildkite without skipping a single step.                                                                                  |
+| diff             |    No    | `string`  |          | Can be used to override the default commands (see below for a better explanation of the defaults) Pass a comma-seperated string of git diff commands if you want multiple custom git diff commands run |
+| log_level        |    No    | `string`  |  `INFO`  | The Level of logging to be used by the python script underneath. Pass `DEBUG` for verbose logging if errors occur                                                                                      |
+| steps            |   Yes    |  `array`  |          | Each Step should contain a `label` with the `include`/`exclude` settings relevant to the label it applies to within the `dynamic_pipeline` file                                                        |
+| label            |   Yes    | `string`  |          | The `label` these conditions apply to within the `dynamic_pipeline` file. (These should be an EXACT match)                                                                                             |
+| include          |    No    |  `array`  |          | If any element is found within the `git diff` then this step will NOT be skipped                                                                                                                       |
+| exclude          |    No    |  `array`  |          | If any alement is found within the `git diff` then this step will be SKIPPED                                                                                                                           |
 
 Other useful things to note:
 - Both `include` and `exclude` make use of Unix shell-style wildcards (Look at `.gitignore` files for inspiration)
@@ -73,7 +74,7 @@ Other useful things to note:
 The default `diff` commands are (run in the order shown):
 
 ```bash
-# Used to check if on a feature branch and check diff against master
+# Used to check if on a feature branch and check diff against the default branch (master by default)
 git diff --name-only origin/master...HEAD
 
 # Useful for checking master against master in a merge commit strategy environment
