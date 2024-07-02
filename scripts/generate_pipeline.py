@@ -145,6 +145,29 @@ class GitDiffConditional:
 
         return conditional_steps[label]
 
+def load_dynamic_pipeline(plugin_prefix: str, env_var_suffix: str) -> dict:
+    """Load the pipeline from the given file_name
+
+    Returns:
+        dict: Contains the buildkite pipeline
+    """
+    env_var = f"{plugin_prefix}_{env_var_suffix}"
+
+    LOG.info("Checking env var: %s for file name", env_var)
+
+    pipeline_file_name = os.environ[env_var]
+
+    try:
+        with open(pipeline_file_name, "r") as stream:
+            pipeline = yaml.safe_load(stream)
+    except FileNotFoundError as e:
+        LOG.error(e)
+        log_and_exit("error", f"File Name: ({pipeline_file_name}) Not Found", 1)
+    except ScannerError:
+        LOG.error("Invalid YAML in File: %s", pipeline_file_name)
+    else:
+        return pipeline
+
 
 def get_diff():
     try:
