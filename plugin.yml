@@ -7,6 +7,8 @@ configuration:
   properties:
     dynamic_pipeline:
       type: string
+    default_branch:
+      type: string
     disable_plugin:
       type: boolean
     diff:
