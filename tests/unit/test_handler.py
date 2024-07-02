@@ -1,5 +1,6 @@
 import pytest
 from CONSTANTS import PLUGIN_PREFIX
+import yaml
 
 from scripts.generate_pipeline import GitDiffConditional, handler
 
@@ -57,7 +58,7 @@ def test_handler_with_steps(
 
     open_mock = mocker.patch("scripts.generate_pipeline.open", mocker.mock_open())
     git_diff_conditional_mock = setup_git_diff_conditional_mock(
-        mocker, {"steps": [{"label": "test"}]}
+        mocker, {"steps": [{"label": "test", "attribute": "\"01234\""}]}
     )
 
     handler()
@@ -101,3 +102,30 @@ def test_handler_error_saving_pipeline(
     log_and_exit_mock.assert_called_once_with(
         "error", "error saving pipeline to disk", 1
     )
+
+def test_handler_output_issues(
+    mocker, monkeypatch, logger, log_and_exit_mock, get_diff_mock
+):
+    monkeypatch.setenv(f"{PLUGIN_PREFIX}_LOG_LEVEL", "DEBUG")
+    monkeypatch.setenv(f"{PLUGIN_PREFIX}_DYNAMIC_PIPELINE", "resources/test.yaml")
+    # open_mock = mocker.patch("scripts.generate_pipeline.open", mocker.mock_open())
+    with open("resources/test.yaml", "r") as stream:
+        pipeline = yaml.safe_load(stream)
+    git_diff_conditional_mock = setup_git_diff_conditional_mock(
+        mocker, pipeline
+    )
+
+    handler()
+
+    # Tests
+    # assert logger.record_tuples == [
+    #     ("cli", 20, "Dynamic pipeline generated, saving for agent upload")
+    # ]
+    # get_diff_mock.assert_called_once_with()
+    # git_diff_conditional_mock.assert_called_once_with(
+    #     get_diff_mock.return_value, PLUGIN_PREFIX
+    # )
+    # open_mock.assert_called_once_with(".git_diff_conditional/pipeline_output", "w")
+    log_and_exit_mock.assert_not_called()
+
+

@@ -191,8 +191,8 @@ def handler():
         LOG.info("Dynamic pipeline generated, saving for agent upload")
 
         try:
-            with open(".git_diff_conditional/pipeline_output", "w") as _fp:
-                yaml.dump(pipeline, _fp, default_flow_style=False)
+            with open("pipeline_output", "w") as _fp:
+                yaml.safe_dump(pipeline, _fp, default_flow_style=False)
         except Exception:
             log_and_exit("error", "error saving pipeline to disk", 1)
 
