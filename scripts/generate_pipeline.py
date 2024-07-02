@@ -13,6 +13,11 @@ from yaml.scanner import ScannerError
 logging.basicConfig(format="%(levelname)s %(message)s")
 LOG = logging.getLogger("cli")
 
+yaml.SafeDumper.add_implicit_resolver(
+    "tag:yaml.org,2002:object",
+    re.compile(r"\d{2,}"),
+    first=list("0")
+)
 
 def log_and_exit(log_level: str, log_message: str, exit_code: int) -> None:
     """Handles the log_message and exit_code"""
