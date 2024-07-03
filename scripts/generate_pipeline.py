@@ -5,6 +5,7 @@ import os
 import re
 import sys
 from fnmatch import fnmatch
+from pathlib import Path
 
 import yaml
 from yaml.scanner import ScannerError
@@ -192,10 +193,12 @@ def handler():
 
         try:
             with open("pipeline_output", "w") as _fp:
+                LOG.debug(pipeline)
                 yaml.safe_dump(pipeline, _fp, default_flow_style=False)
         except Exception:
             log_and_exit("error", "error saving pipeline to disk", 1)
 
+    LOG.debug(f"File {'' if Path('pipeline_output').is_file() else 'not'} exists")
 
 if __name__ == "__main__":
     handler()
