@@ -192,7 +192,7 @@ def handler():
         LOG.info("Dynamic pipeline generated, saving for agent upload")
 
         try:
-            with open("pipeline_output", "w") as _fp:
+            with open(".git_diff_conditional/pipeline_output", "w") as _fp:
                 LOG.debug(pipeline)
                 yaml.safe_dump(pipeline, _fp, default_flow_style=False)
         except Exception:
