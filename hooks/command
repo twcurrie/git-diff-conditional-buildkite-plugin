@@ -46,9 +46,9 @@ fi
 docker build "$basedir" -t buildkite-pyyaml > /dev/null
 
 docker run --rm -v "$PWD:/buildkite" --env-file <(env | grep BUILDKITE) buildkite-pyyaml
+cat .git_diff_conditional/pipeline_output
 
 if [[ -s ".git_diff_conditional/pipeline_output" ]]; then
   echo "Uploading the pipeline to the buildkite-agent"
-  cat .git_diff_conditional/pipeline_output
   buildkite-agent pipeline upload .git_diff_conditional/pipeline_output
 fi
